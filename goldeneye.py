@@ -8,7 +8,7 @@ import urllib2
 from HTMLParser import HTMLParser
 from random import randint
 
-version = 0.4
+version = 0.5
 
 filename = 'goldeneye_data.json'
 levels = ['Dam', 'Facility', 'Runway', 'Surface 1', 'Bunker 1', 'Silo', 'Frigate', 'Surface 2', 'Bunker 2', 'Statue', 'Archives', 'Streets', 'Depot', 'Train', 'Jungle', 'Control', 'Caverns', 'Cradle', 'Aztec', 'Egypt']
@@ -22,7 +22,7 @@ def writeOBS(string):
 
 def updatetxt(level, diff, pr, attempts, timespent, completions):
 	# This is whats written to obs.txt, feel free to change it. \n indicates a new line
-	string = level + " (" + diff + ")\nPR: " + pr + "\nTime Spent: " + timespent + "\nAttempt #" + attempts + "\nCompletions: " + completions + " (" + str(percentage(completions, attempts)) + ")" 
+	string = level + " (" + diff + ")\nPR: " + pr + "\nTime Spent: " + timespent + "\nAttempt #" + attempts 
 	writeOBS(string)
 
 def isTimeFormat(input): # Used on the HTML data from the-elite to see if what is being read is a time or not
@@ -36,7 +36,7 @@ def save(filename, data): # Saves data to the json, filename specified above
 	with open(filename, 'w') as outfile:
 		json.dump(data, outfile, indent=4, sort_keys=True)
 	print '*** Saved! ***'
-	writeOBS("goldeneye-ils\nversion:" + str(version) + "\n\nNot Active")
+	writeOBS("goldeneye-ils\nversion:" + str(version) + "\n(Not Active)")
 
 def importFromTheElite(username):
 	print 'Getting times from the-elite...'
@@ -80,7 +80,7 @@ def printDots():
 		i += 1
 		
 
-writeOBS("goldeneye-ils\nversion: " + str(version) + "\n\nNot Active")	
+writeOBS("goldeneye-ils\nversion: " + str(version) + "\n(Not Active)")	
 
 if not os.path.isfile(filename): # Data not found, generate new
 	print 'Data not found. Creating new.'
@@ -131,7 +131,7 @@ levelSet = False
 diffSet = False
 
 while True:
-	writeOBS("goldeneye-ils\nversion: " + str(version) + "\n\nNot Active")	
+	writeOBS("goldeneye-ils\nversion: " + str(version) + "\n(Not Active)")	
 	while levelSet == False:
 		level = raw_input("Level: ").title()
 		if level in data:
@@ -173,17 +173,17 @@ while True:
 		print 'PR: ' + data[level][diff]["time"]
 		print 'Attempt #' + str(data[level][diff]["attempts"])
 		print 'Time Spent: ' + str(niceTime)
-		print 'Completions: ' + str(data[level][diff]["completions"]) + " (" + str(completionRate) + ")"
+		#print 'Completions: ' + str(data[level][diff]["completions"])
 		print ''
 		print '-- Commands --'
-		print ' | ENTER = +1 attempts | C = +1 completions | PR = set new pr | L = change level/diff |'
+		print ' | ENTER = +1 attempts | PR = set new pr | L = change level/diff |'
 		print ' | R = reset stats for current level/diff | Q = save & quit |'
 		printDots()
 		command = raw_input('Command: ').lower()
 
 		if command == "q":
 			save(filename, data)
-			writeOBS("goldeneye-ils\nversion: " + str(version) + "\n\nNot Active")	
+			writeOBS("goldeneye-ils\nversion: " + str(version) + "\n(Not Active)")	
 			sys.exit(1)
 		elif command == "r":
 			data[level][diff]["timespent"] = 0
@@ -212,7 +212,7 @@ while True:
 			# increment attempts and calc new time
 			i = datetime.datetime.now()
 			timeDiff = i - timeStart
-			if timeDiff.seconds < 2:
+			if timeDiff.seconds < 1:
 				print "\n *** double tap prevented *** \n"
 			else:
 				data[level][diff]["timespent"] += timeDiff.seconds
